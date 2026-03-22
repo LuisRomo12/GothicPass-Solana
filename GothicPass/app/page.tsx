@@ -1,155 +1,131 @@
 "use client";
+
+import Image from "next/image";
+import Link from "next/link";
 import { useWalletConnection } from "@solana/react-hooks";
+import { Calendar, MapPin, Users, Ticket, ArrowRight, Zap } from "lucide-react";
+import { Navbar } from "./components/navbar";
+import { MOCK_EVENTS } from "./data/events";
 
 export default function Home() {
-  const { connectors, connect, disconnect, wallet, status } =
-    useWalletConnection();
-
-  const address = wallet?.account.address.toString();
+  const { status } = useWalletConnection();
+  const isConnected = status === "connected";
 
   return (
-    <div className="relative min-h-screen overflow-x-clip bg-bg1 text-foreground">
-      <main className="relative z-10 mx-auto flex min-h-screen max-w-4xl flex-col gap-10 border-x border-border-low px-6 py-16">
-        <header className="space-y-3">
-          <p className="text-sm uppercase tracking-[0.18em] text-muted">
-            Solana starter kit
-          </p>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-            Ship a Solana dapp fast
+    <div className="min-h-screen bg-zinc-950 text-gray-100">
+      <Navbar />
+
+      <main className="mx-auto max-w-5xl px-4 pb-20">
+        {/* ─── HERO ─── */}
+        <section className="py-12 text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-purple-800/60 bg-purple-900/20 px-4 py-1.5 text-xs font-medium text-purple-300">
+            <Zap className="h-3.5 w-3.5" />
+            Powered by Solana Devnet
+          </div>
+          <h1 className="mt-3 bg-gradient-to-br from-white via-purple-200 to-purple-400 bg-clip-text text-4xl font-extrabold leading-tight tracking-tight text-transparent sm:text-5xl">
+            Underground NFT<br />Ticketing on Solana
           </h1>
-          <p className="max-w-3xl text-base leading-relaxed text-muted">
-            Drop in <code className="font-mono">@solana/react-hooks</code>, wrap
-            your tree once, and you get wallet connect/disconnect plus
-            ready-to-use hooks for balances and transactions—no manual RPC
-            wiring.
+          <p className="mt-4 text-sm text-gray-400">
+            Eliminate middlemen, secure your digital memory.
           </p>
-          <ul className="mt-4 space-y-2 text-sm text-foreground">
-            <li className="flex gap-2">
-              <span
-                className="mt-1.5 h-2 w-2 rounded-full bg-foreground/60"
-                aria-hidden
-              />
-              <div>
-                <a
-                  className="font-medium underline underline-offset-2"
-                  href="https://solana.com/docs"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Solana docs
-                </a>{" "}
-                — core concepts, RPC, programs, and client patterns.
-              </div>
-            </li>
-            <li className="flex gap-2">
-              <span
-                className="mt-1.5 h-2 w-2 rounded-full bg-foreground/60"
-                aria-hidden
-              />
-              <div>
-                <a
-                  className="font-medium underline underline-offset-2"
-                  href="https://www.anchor-lang.com/docs/introduction"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Anchor docs
-                </a>{" "}
-                — build and test programs with IDL, macros, and type-safe
-                clients.
-              </div>
-            </li>
-            <li className="flex gap-2">
-              <span
-                className="mt-1.5 h-2 w-2 rounded-full bg-foreground/60"
-                aria-hidden
-              />
-              <div>
-                <a
-                  className="font-medium underline underline-offset-2"
-                  href="https://faucet.solana.com/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Solana faucet (devnet)
-                </a>{" "}
-                — grab free devnet SOL to try transfers and transactions.
-              </div>
-            </li>
-            <li className="flex gap-2">
-              <span
-                className="mt-1.5 h-2 w-2 rounded-full bg-foreground/60"
-                aria-hidden
-              />
-              <div>
-                <a
-                  className="font-medium underline underline-offset-2"
-                  href="https://github.com/solana-foundation/framework-kit/tree/main/packages/react-hooks"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  @solana/react-hooks README
-                </a>{" "}
-                — how this starter wires the client, connectors, and hooks.
-              </div>
-            </li>
-          </ul>
-        </header>
 
-        <section className="w-full max-w-3xl space-y-4 rounded-2xl border border-border-low bg-card p-6 shadow-[0_20px_80px_-50px_rgba(0,0,0,0.35)]">
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-1">
-              <p className="text-lg font-semibold">Wallet connection</p>
-              <p className="text-sm text-muted">
-                Pick any discovered connector and manage connect / disconnect in
-                one spot.
-              </p>
-            </div>
-            <span className="rounded-full bg-cream px-3 py-1 text-xs font-semibold uppercase tracking-wide text-foreground/80">
-              {status === "connected" ? "Connected" : "Not connected"}
-            </span>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            {connectors.map((connector) => (
-              <button
-                key={connector.id}
-                onClick={() => connect(connector.id)}
-                disabled={status === "connecting"}
-                className="group flex items-center justify-between rounded-xl border border-border-low bg-card px-4 py-3 text-left text-sm font-medium transition hover:-translate-y-0.5 hover:shadow-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <span className="flex flex-col">
-                  <span className="text-base">{connector.name}</span>
-                  <span className="text-xs text-muted">
-                    {status === "connecting"
-                      ? "Connecting…"
-                      : status === "connected" &&
-                          wallet?.connector.id === connector.id
-                        ? "Active"
-                        : "Tap to connect"}
-                  </span>
-                </span>
-                <span
-                  aria-hidden
-                  className="h-2.5 w-2.5 rounded-full bg-border-low transition group-hover:bg-primary/80"
-                />
-              </button>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3 border-t border-border-low pt-4 text-sm">
-            <span className="rounded-lg border border-border-low bg-cream px-3 py-2 font-mono text-xs">
-              {address ?? "No wallet connected"}
-            </span>
-            <button
-              onClick={() => disconnect()}
-              disabled={status !== "connected"}
-              className="inline-flex items-center gap-2 rounded-lg border border-border-low bg-card px-3 py-2 font-medium transition hover:-translate-y-0.5 hover:shadow-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              Disconnect
-            </button>
+          {/* Wallet status banner */}
+          <div
+            className={`mx-auto mt-8 max-w-sm rounded-2xl border px-5 py-4 text-sm transition-all ${
+              isConnected
+                ? "border-purple-700/60 bg-purple-900/20"
+                : "border-zinc-800 bg-zinc-900"
+            }`}
+          >
+            {isConnected ? (
+              <div>
+                <p className="font-semibold text-purple-300">
+                  ✦ Wallet Conectada
+                </p>
+                <p className="mt-0.5 text-xs text-gray-400">
+                  Explora los eventos a continuación
+                </p>
+              </div>
+            ) : (
+              <div>
+                <p className="font-semibold text-gray-200">
+                  Conecta tu wallet para empezar
+                </p>
+                <p className="mt-0.5 text-xs text-gray-500">
+                  Compatible con Phantom y Solflare
+                </p>
+              </div>
+            )}
           </div>
         </section>
+
+        {/* ─── EVENTS GRID ─── */}
+        <section>
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-lg font-bold tracking-tight text-white">
+              Próximos Eventos Underground
+            </h2>
+            <Link
+              href="/tickets"
+              className="flex items-center gap-1 text-xs text-purple-400 transition hover:text-purple-300"
+            >
+              Mis Tickets
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {MOCK_EVENTS.map((event) => (
+              <Link
+                key={event.id}
+                href={`/event/${event.id}`}
+                className="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 transition hover:border-purple-700/70 hover:shadow-[0_0_30px_-8px_rgba(147,51,234,0.4)]"
+              >
+                {/* Image */}
+                <div className="relative h-44 w-full overflow-hidden">
+                  <Image
+                    src={event.imageUrl}
+                    alt={event.title}
+                    fill
+                    className="object-cover transition duration-500 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent" />
+                  {/* Price badge */}
+                  <span className="absolute right-3 top-3 rounded-full bg-purple-700 px-2.5 py-0.5 text-xs font-bold text-white shadow-lg">
+                    {event.price} SOL
+                  </span>
+                </div>
+
+                {/* Content */}
+                <div className="p-4">
+                  <h3 className="font-bold text-white group-hover:text-purple-200 transition">
+                    {event.title}
+                  </h3>
+                  <div className="mt-2 flex flex-wrap gap-3 text-xs text-gray-400">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {event.date.split(",")[0].replace("April", "Apr")}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {event.location.split(",")[0]}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Users className="h-3 w-3" />
+                      {event.available}/{event.total}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* ─── FOOTER NOTE ─── */}
+        <p className="mt-12 text-center text-xs text-zinc-600">
+          GothicPass · Solana Devnet · Hackathon WayLearn 2026
+        </p>
       </main>
     </div>
   );
