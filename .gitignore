@@ -1,0 +1,11 @@
+.anchor/
+target/
+!target/idl/*.json
+!target/types/*.ts
+node_modules/
+keys/
+.env
+**/*.json
+!anchor.json
+!package.json
+!tsconfig.json
