@@ -15,8 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Solana dApp Starter",
-  description: "A minimal Next.js starter powered by @solana/react-hooks",
+  title: "GothicPass — NFT Ticketing on Solana",
+  description:
+    "Compra y verifica entradas NFT para eventos underground en Solana. Elimina intermediarios, asegura tu memoria digital.",
   icons: {
     icon: "/icon.svg",
     shortcut: "/icon.svg",
