@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
 import {
   ArrowLeft,
   Calendar,
@@ -12,17 +11,27 @@ import {
   Users,
   Loader2,
   CheckCircle,
+  AlertTriangle,
+  X,
+  ExternalLink,
 } from "lucide-react";
 import { Navbar } from "../../components/navbar";
 import { MOCK_EVENTS } from "../../data/events";
+import { useBuyTicket } from "../../hooks/useBuyTicket";
 
 export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
   const event = MOCK_EVENTS.find((e) => e.id === id);
 
-  const [mintState, setMintState] = useState<
-    "idle" | "loading" | "success"
-  >("idle");
+  const {
+    buyTicket,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+    txSignature,
+    reset,
+  } = useBuyTicket();
 
   if (!event) {
     return (
@@ -39,18 +48,10 @@ export default function EventDetailPage() {
   }
 
   const soldPct = Math.round(
-    ((event.total - event.available) / event.total) * 100
+    ((event.total - event.available) / event.total) * 100,
   );
 
-  // ─── Mock mint handler ───────────────────────────────────────────────────
-  async function handleMint() {
-    console.log("🎟️  Iniciando transacción… [Anchor hook se conectará aquí]");
-    setMintState("loading");
-    // Simulated 2-second transaction delay
-    await new Promise((r) => setTimeout(r, 2000));
-    setMintState("success");
-    console.log("✅ NFT Ticket mintado con éxito (simulación)");
-  }
+  const handleMint = () => buyTicket(event.title);
 
   return (
     <div className="min-h-screen bg-zinc-950 text-gray-100">
@@ -162,36 +163,68 @@ export default function EventDetailPage() {
 
         {/* ─── MINT CTA (sticky bottom) ─── */}
         <div className="fixed inset-x-0 bottom-0 z-50 border-t border-zinc-800 bg-zinc-950/90 px-4 pb-6 pt-4 backdrop-blur-md">
-          <div className="mx-auto max-w-2xl">
+          <div className="mx-auto max-w-2xl space-y-3">
+
+            {/* ── Error banner ── */}
+            {isError && error && (
+              <div className="flex items-start gap-3 rounded-xl border border-red-800/60 bg-red-900/20 px-4 py-3 text-sm text-red-300">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+                <p className="flex-1 leading-snug">{error}</p>
+                <button
+                  onClick={reset}
+                  aria-label="Cerrar error"
+                  className="text-red-400 transition hover:text-red-200"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+
+            {/* ── Main CTA button ── */}
             <button
               id="btn-mint-nft"
               onClick={handleMint}
-              disabled={mintState === "loading" || mintState === "success"}
+              disabled={isLoading || isSuccess}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-purple-700 py-4 text-base font-bold text-white shadow-[0_0_20px_-4px_rgba(147,51,234,0.7)] transition hover:bg-purple-600 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {mintState === "idle" && (
+              {!isLoading && !isSuccess && (
                 <>🎟️ Comprar Entrada (Mint NFT) · {event.price} SOL</>
               )}
-              {mintState === "loading" && (
+              {isLoading && (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
                   Procesando transacción…
                 </>
               )}
-              {mintState === "success" && (
+              {isSuccess && (
                 <>
                   <CheckCircle className="h-5 w-5 text-green-400" />
                   ¡NFT Mintado con Éxito!
                 </>
               )}
             </button>
-            {mintState === "success" && (
-              <Link
-                href="/tickets"
-                className="mt-3 block text-center text-sm text-purple-400 underline"
-              >
-                Ver en Mis Pases →
-              </Link>
+
+            {/* ── Post-success links ── */}
+            {isSuccess && (
+              <div className="flex items-center justify-between">
+                <Link
+                  href="/tickets"
+                  className="text-sm text-purple-400 underline transition hover:text-purple-300"
+                >
+                  Ver en Mis Pases →
+                </Link>
+                {txSignature && (
+                  <a
+                    href={`https://explorer.solana.com/tx/${txSignature}?cluster=devnet`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-xs text-zinc-500 transition hover:text-zinc-300"
+                  >
+                    Ver en Explorer
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                )}
+              </div>
             )}
           </div>
         </div>
