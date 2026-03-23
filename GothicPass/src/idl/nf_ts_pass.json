@@ -1,0 +1,23 @@
+{
+  "address": "7WTDCvr9yeioTdhgdL1LikJhegM285QENZvdkE9BcrtD",
+  "metadata": {
+    "name": "nf_ts_pass",
+    "version": "0.1.0",
+    "spec": "0.1.0"
+  },
+  "instructions": [
+    {
+      "name": "buy_ticket",
+      "discriminator": [11, 24, 17, 193, 168, 116, 164, 169],
+      "accounts": [
+        { "name": "user", "writable": true, "signer": true },
+        { "name": "treasury", "writable": true },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [{ "name": "name", "type": "string" }]
+    }
+  ]
+}
