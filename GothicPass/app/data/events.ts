@@ -52,7 +52,7 @@ export const MOCK_TICKETS = [
   {
     id: "nft-ticket-71",
     tokenId: "NFT-TICKET-1-#1",
-    event: MOCK_EVENTS[0],
-    purchasedAt: "March 14, 2026",
+    event: MOCK_EVENTS[1],
+    purchasedAt: "Hoy",
   },
 ];

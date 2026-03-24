@@ -245,7 +245,7 @@ export default function TicketsPage() {
 
                     {/* Footer */}
                     <div className="mt-4 flex justify-between border-t border-zinc-800 pt-3 text-[11px] text-zinc-500">
-                      <span>Purchased</span>
+                      <span>Comprado</span>
                       <span>{selectedTicket.purchasedAt}</span>
                     </div>
                   </div>
