@@ -12,7 +12,7 @@ nf_ts_pass = "7WTDCvr9yeioTdhgdL1LikJhegM285QENZvdkE9BcrtD"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "Devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
